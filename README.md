@@ -1,21 +1,19 @@
-[ASP.NET Project Showcase](github-homepage)
+# [ASP.NET Project Showcase](github-homepage)
 
-[![GitHub contributors][contributors]][contributors-url]
-[![GitHub stars][stars]][stars-url]
-[![GitHub forks][forks]][forks-url]
+![Project Image](assets/project.png)
 
 __ASP.NET Project Showcase__ is a meta-repository showcasing several systems built up with __C# ASP.NET__. They are:
 
-1. Pizza Inventory Management UI -- [RazarPagesPizza](RazarPagesPizza)
-2. Pizza Inventory Management API -- [ContosoPizza](ContosoPizza)
+1. [Pizza Inventory Management UI](#1-pizza-inventory-management-ui) -- [RazarPagesPizza](RazarPagesPizza)
+2. [Pizza Inventory Management API](#2-pizza-inventory-management-api) -- [ContosoPizza](ContosoPizza)
 
 
-# Project Showcase
+## Project Showcase
 
-## 1. Pizza Inventory Management UI
-### Project Nature
+### [1. Pizza Inventory Management UI](RazarPagesPizza)
+#### Project Nature
 UI + backend + Non-Presistent storagea
-### Main Features
+#### Main Features
 - Allow user to do different operation with web UI, operations are
     - Get pizza inventory store
     - Add pizza inventory with following attributes
@@ -28,10 +26,10 @@ UI + backend + Non-Presistent storagea
     - Price {Numbers}
 
 
-## 2. Pizza Inventory Management API
-### Project Nature
+### [2. Pizza Inventory Management API](ContosoPizza)
+#### Project Nature
 API backend + Non-Presistent storage
-### Main Features
+#### Main Features
 - Allow user to do different operation with web UI. Operations include
     - Get pizza inventory store
     - Add pizza inventory with following attributes
