@@ -1,4 +1,4 @@
-# [ASP.NET Project Showcase][github-homepage]
+# ASP.NET Project Showcase
 
 <p align="center">
     <img src="assets/project.png" alt="Project Image" width="300px" />
