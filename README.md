@@ -1,6 +1,8 @@
 # [ASP.NET Project Showcase](github-homepage)
 
-![Project Image](assets/project.png)
+<p align="center">
+    <img src="assets/project.png" alt="Project Image" width="300px" />
+</p>
 
 __ASP.NET Project Showcase__ is a meta-repository showcasing several systems built up with __C# ASP.NET__. They are:
 
