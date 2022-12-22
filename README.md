@@ -14,7 +14,7 @@ __ASP.NET Project Showcase__ is a meta-repository showcasing several systems bui
 
 ### [1. Pizza Inventory Management UI](RazarPagesPizza)
 #### Project Nature
-UI + backend + Non-Presistent storagea
+UI + backend + Non-Presistent storage
 #### Main Features
 - Allow user to do different operation with web UI, operations are
     - Get pizza inventory store

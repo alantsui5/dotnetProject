@@ -7,7 +7,7 @@ public class Pizza
     public bool IsGlutenFree { get; set; }
 }
 
-class PizzaDb : DbContext
+public class PizzaDb : DbContext
 {
     public PizzaDb(DbContextOptions options) : base(options) { }
     public DbSet<Pizza> Pizzas { get; set; } = null!;

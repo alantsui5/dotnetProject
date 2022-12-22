@@ -1,5 +1,6 @@
 using ContosoPizza.Models;
 using ContosoPizza.Services;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ContosoPizza.Controllers;
@@ -8,20 +9,23 @@ namespace ContosoPizza.Controllers;
 [Route("[controller]")]
 public class PizzaController : ControllerBase
 {
-    public PizzaController()
+    private readonly PizzaDb _db;
+    public PizzaController(PizzaDb db) 
     {
+        _db = db;
     }
 
     // GET all action
     [HttpGet]
-    public ActionResult<List<Pizza>> GetAll() =>
-        PizzaService.GetAll();
+    public async Task<ActionResult<List<Pizza>>> GetAll(){
+        return await _db.Pizzas.ToListAsync();
+    }
 
     // GET by Id action
     [HttpGet("{id}")]
-    public ActionResult<Pizza> Get(int id)
+    public async Task<ActionResult<Pizza>> Get(int id)
     {
-        var pizza = PizzaService.Get(id);
+        var pizza = await _db.Pizzas.FindAsync(id);
 
         if(pizza == null)
             return NotFound();
@@ -31,42 +35,44 @@ public class PizzaController : ControllerBase
 
     // POST action
     [HttpPost]
-    public IActionResult Create(Pizza pizza)
+    public async Task<IActionResult> Create(Pizza pizza)
     {            
         // This code will save the pizza and return a result
-        PizzaService.Add(pizza);
+        await _db.Pizzas.AddAsync(pizza);
+        await _db.SaveChangesAsync();
         return CreatedAtAction(nameof(Create), new { id = pizza.Id }, pizza);
     }
 
     // PUT action
     [HttpPut("{id}")]
-    public IActionResult Update(int id, Pizza pizza)
+    public async Task<IActionResult> Update(int id, Pizza pizza)
     {
         // This code will update the pizza and return a result
-        if (id != pizza.Id)
+        if(id != pizza.Id)
             return BadRequest();
-            
-        var existingPizza = PizzaService.Get(id);
+
+        var existingPizza = await _db.Pizzas.FindAsync(id);
         if(existingPizza is null)
             return NotFound();
-    
-        PizzaService.Update(pizza);           
-    
+
+        existingPizza.Name = pizza.Name;
+        existingPizza.IsGlutenFree = pizza.IsGlutenFree;
+        await _db.SaveChangesAsync();
         return NoContent();
     }
 
     // DELETE action
     [HttpDelete("{id}")]
-    public IActionResult Delete(int id)
+    public async Task<IActionResult> Delete(int id)
     {
         // This code will delete the pizza and return a result
-        var pizza = PizzaService.Get(id);
+        var pizza = await _db.Pizzas.FindAsync(id);
    
         if (pizza is null)
             return NotFound();
         
-        PizzaService.Delete(id);
-    
-        return NoContent();
+        _db.Pizzas.Remove(pizza);
+        await _db.SaveChangesAsync();
+        return Ok();
     }
 }
