@@ -12,6 +12,12 @@ namespace RazarPagesPizza.Pages
 
         public List<Pizza> pizzas = new();
 
+        PizzaService _pizzaService;
+
+        public PizzaModel(PizzaService pizzaService){
+            _pizzaService = pizzaService;
+        }
+
         public string GlutenFreeText(Pizza pizza)
         {
             return pizza.IsGlutenFree ? "Gluten Free": "Not Gluten Free";
@@ -19,7 +25,7 @@ namespace RazarPagesPizza.Pages
 
         public void OnGet()
         {
-            pizzas = PizzaService.GetAll();
+            pizzas = _pizzaService.GetAll();
         }
 
         public IActionResult OnPost()
@@ -28,13 +34,13 @@ namespace RazarPagesPizza.Pages
             {
                 return Page();
             }
-            PizzaService.Add(NewPizza);
+            _pizzaService.Add(NewPizza);
             return RedirectToAction("Get");
         }
 
         public IActionResult OnPostDelete(int id)
         {
-            PizzaService.Delete(id);
+            _pizzaService.Delete(id);
             return RedirectToAction("Get");
         }
 

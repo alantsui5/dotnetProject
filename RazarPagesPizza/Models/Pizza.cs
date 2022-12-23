@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Microsoft.EntityFrameworkCore;
 
 namespace RazorPagesPizza.Models;
 
@@ -16,3 +17,9 @@ public class Pizza
 }
 
 public enum PizzaSize { Small, Medium, Large }
+
+public class PizzaDb : DbContext
+{
+    public PizzaDb(DbContextOptions options) : base(options) { }
+    public DbSet<Pizza> Pizzas { get; set; } = null!;
+}

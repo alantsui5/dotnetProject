@@ -1,44 +1,57 @@
 using RazorPagesPizza.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace RazorPagesPizza.Services;
-public static class PizzaService
+public class PizzaService
 {
-    static List<Pizza> Pizzas { get; }
+
+    private readonly PizzaDb _db;
+    
     static int nextId = 3;
-    static PizzaService()
+    public PizzaService(PizzaDb db)
     {
-        Pizzas = new List<Pizza>
-                {
-                    new Pizza { Id = 1, Name = "Classic Italian", Price=20.00M, Size=PizzaSize.    Large, IsGlutenFree = false },
-                    new Pizza { Id = 2, Name = "Veggie", Price=15.00M, Size=PizzaSize.Small,     IsGlutenFree = true }
-                };
+        _db = db;
+        
+        if (!_db.Pizzas.Any()){
+            _db.Pizzas.Add(new Pizza {Name = "Classic Italian", Price=20.00M, Size=PizzaSize.Large, IsGlutenFree = false });
+            _db.Pizzas.Add(new Pizza {Name = "Veggie", Price=15.00M, Size=PizzaSize.Small, IsGlutenFree = true });
+            _db.SaveChanges();
+        }
+    }
+    
+
+    public List<Pizza> GetAll() => _db.Pizzas.AsNoTracking().ToList();
+
+    public Pizza? Get(int id) => _db.Pizzas.AsNoTracking().FirstOrDefault(p => p.Id == id);
+
+    public void Add(Pizza newPizza)
+    {
+        newPizza.Id = nextId++;
+
+        _db.Pizzas.Add(newPizza);
+        _db.SaveChanges();
     }
 
-    public static List<Pizza> GetAll() => Pizzas;
-
-    public static Pizza? Get(int id) => Pizzas.FirstOrDefault(p => p.Id == id);
-
-    public static void Add(Pizza pizza)
-    {
-        pizza.Id = nextId++;
-        Pizzas.Add(pizza);
-    }
-
-    public static void Delete(int id)
+    public void Delete(int id)
     {
         var pizza = Get(id);
-        if (pizza is null)
-            return;
-
-        Pizzas.Remove(pizza);
+        if (pizza is not null){
+            _db.Pizzas.Remove(pizza);
+            _db.SaveChanges();
+        }
     }
 
-    public static void Update(Pizza pizza)
+    public void Update(Pizza pizza)
     {
-        var index = Pizzas.FindIndex(p => p.Id == pizza.Id);
-        if (index == -1)
-            return;
+        var pizzaToUpdate = _db.Pizzas.Find(pizza.Id);
+        if (pizzaToUpdate is null)
+            throw new InvalidOperationException("Pizza does not exist");
 
-        Pizzas[index] = pizza;
+        pizzaToUpdate.IsGlutenFree = pizza.IsGlutenFree;
+        pizzaToUpdate.Name = pizza.Name;
+        pizzaToUpdate.Price = pizza.Price;
+        pizzaToUpdate.Size = pizza.Size;
+
+        _db.SaveChanges();
     }
 }
