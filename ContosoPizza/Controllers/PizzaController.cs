@@ -1,6 +1,5 @@
-using ContosoPizza.Models;
 using ContosoPizza.Services;
-using Microsoft.EntityFrameworkCore;
+using ContosoPizza.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ContosoPizza.Controllers;
@@ -9,70 +8,97 @@ namespace ContosoPizza.Controllers;
 [Route("[controller]")]
 public class PizzaController : ControllerBase
 {
-    private readonly PizzaDb _db;
-    public PizzaController(PizzaDb db) 
+    PizzaService _service;
+    
+    public PizzaController(PizzaService service)
     {
-        _db = db;
+        _service = service;
     }
 
-    // GET all action
     [HttpGet]
-    public async Task<ActionResult<List<Pizza>>> GetAll(){
-        return await _db.Pizzas.ToListAsync();
+    public IEnumerable<Pizza> GetAll()
+    {
+        return _service.GetAll();
     }
 
-    // GET by Id action
     [HttpGet("{id}")]
-    public async Task<ActionResult<Pizza>> Get(int id)
+    public ActionResult<Pizza> GetById(int id)
     {
-        var pizza = await _db.Pizzas.FindAsync(id);
+        var pizza = _service.GetById(id);
 
-        if(pizza == null)
+        if(pizza is not null)
+        {
+            return pizza;
+        }
+        else
+        {
             return NotFound();
-
-        return pizza;
+        }
     }
 
-    // POST action
+
     [HttpPost]
-    public async Task<IActionResult> Create(Pizza pizza)
-    {            
-        // This code will save the pizza and return a result
-        await _db.Pizzas.AddAsync(pizza);
-        await _db.SaveChangesAsync();
-        return CreatedAtAction(nameof(Create), new { id = pizza.Id }, pizza);
-    }
-
-    // PUT action
-    [HttpPut("{id}")]
-    public async Task<IActionResult> Update(int id, Pizza pizza)
+    public IActionResult Create(Pizza newPizza)
     {
-        // This code will update the pizza and return a result
-        if(id != pizza.Id)
-            return BadRequest();
-
-        var existingPizza = await _db.Pizzas.FindAsync(id);
-        if(existingPizza is null)
-            return NotFound();
-
-        existingPizza.Name = pizza.Name;
-        existingPizza.IsGlutenFree = pizza.IsGlutenFree;
-        await _db.SaveChangesAsync();
-        return NoContent();
+        var pizza = _service.Create(newPizza);
+        return CreatedAtAction(nameof(GetById), new { id = pizza!.Id }, pizza);
     }
 
-    // DELETE action
+    [HttpGet("toppings")]
+    public IEnumerable<Topping> GetAllToppings(){
+        return _service.GetAllToppings();
+    }
+
+    [HttpPut("{id}/addtopping")]
+    public IActionResult AddTopping(int id, int toppingId)
+    {
+        var pizzaToUpdate = _service.GetById(id);
+
+        if(pizzaToUpdate is not null)
+        {
+            _service.AddTopping(id, toppingId);
+            return NoContent();    
+        }
+        else
+        {
+            return NotFound();
+        }
+    }
+
+    [HttpGet("sauces")]
+    public IEnumerable<Sauce> GetAllSauces(){
+        return _service.GetAllSauces();
+    }
+
+    [HttpPut("{id}/updatesauce")]
+    public IActionResult UpdateSauce(int id, int sauceId)
+    {
+        var pizzaToUpdate = _service.GetById(id);
+
+        if(pizzaToUpdate is not null)
+        {
+            _service.UpdateSauce(id, sauceId);
+            return NoContent();    
+        }
+        else
+        {
+            return NotFound();
+        }
+    }
+
     [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(int id)
+    public IActionResult Delete(int id)
     {
-        // This code will delete the pizza and return a result
-        var pizza = await _db.Pizzas.FindAsync(id);
-   
-        if (pizza is null)
+        var pizza = _service.GetById(id);
+
+        if(pizza is not null)
+        {
+            _service.DeleteById(id);
+            return Ok();
+        }
+        else
+        {
             return NotFound();
-        
-        _db.Pizzas.Remove(pizza);
-        await _db.SaveChangesAsync();
-        return Ok();
+        }
     }
 }
